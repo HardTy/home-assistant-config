@@ -1,0 +1,53 @@
+---
+blueprint:
+  name: ESPHome tagreader - Scene per Tag
+  description: |
+    # ESPHome tagreader - Scene per Tag
+
+    This blueprint creates a automation that triggers when a tag is readed by
+    a esphome tag reader. The automation will then call a scene.
+    A nice Porject for an esphome tag reader is
+    [Github - adonno/tagreader](https://github.com/adonno/tagreader)
+  domain: automation
+  source_url: https://github.com/HardTy/home-assistant-config/blob/main/blueprints/tag_scene.yaml
+  input:
+    tag_entity:
+      name: Tag
+      description: The tag that triggers the scene
+      selector:
+        entity:
+          domain: tag
+    reader_id:
+      name: ESPHome NFC reader device
+      description: This is your NFC reader
+      selector:
+        device:
+    scene_id:
+      name: Scene
+      description: The scene to call when the tag is readed
+      selector:
+        entity:
+          domain: scene
+
+variables:
+  reader_id: !input reader_id
+  tag_entity: !input tag_entity
+  tag_id: "{{ state_attr(tag_entity, 'tag_id') }}"
+
+trigger:
+  - platform: event
+    event_type: tag_scanned
+
+conditions:
+  - alias: Check for the right tag and reader
+    condition: and
+    conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.tag_id == tag_entity }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.device_id == reader_id }}"
+
+action:
+  - service: scene.turn_on
+    target:
+      entity_id: !input scene_id
