@@ -29,26 +29,26 @@ blueprint:
         action:
           domain: scene
 
-  variables:
-    tag_id: !input tag_id
-    reader_id: !input reader_id
-    scene_id: !input scene_id
+variables:
+  tag_id: !input tag_id
+  reader_id: !input reader_id
+  scene_id: !input scene_id
 
-  trigger:
-    platform: event
-    event_type: esphome.tag_scanned
+trigger:
+  platform: event
+  event_type: esphome.tag_scanned
 
-  condition:
-    condition: and
-    conditions:
-      - condition: template
-        value_template: |
-          "{{ trigger.event.data.device_id == reader_id.device_id }}"
-      - condition: template
-        value_template: |
-          "{{ trigger.event.data.tag_id == tag_id.tag_id }}"
+condition:
+  condition: and
+  conditions:
+    - condition: template
+      value_template: |
+        "{{ trigger.event.data.device_id == reader_id.device_id }}"
+    - condition: template
+      value_template: |
+        "{{ trigger.event.data.tag_id == tag_id.tag_id }}"
 
-  action:
-    service: scene.turn_on
-    target:
-      entity_id: scene.scene_id
+action:
+  service: scene.turn_on
+  target:
+    entity_id: scene.scene_id
