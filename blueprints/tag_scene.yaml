@@ -43,7 +43,7 @@ conditions:
     condition: and
     conditions:
       - condition: template
-        value_template: "{{ trigger.event.data.tag_id == tag_entity }}"
+        value_template: "{{ trigger.event.data.tag_id == tag_id }}"
       - condition: template
         value_template: "{{ trigger.event.data.device_id == reader_id }}"
 
