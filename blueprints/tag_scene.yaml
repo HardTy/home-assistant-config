@@ -1,29 +1,32 @@
 ---
 blueprint:
-  name: ESPHome tagreader - Scene per Tag
+  name: Tagreader - Scene per Tag
   description: |
-    # ESPHome tagreader - Scene per Tag
+    # Tagreader - Scene per Tag
 
-    This blueprint creates a automation that triggers when a tag is readed by
-    a esphome tag reader. The automation will then call a scene.
-    A nice Porject for an esphome tag reader is
+    📘 This blueprint creates a automation that triggers when a tag is readed by
+    a Tag (NFC/QR-Code) Reader device. This can be a ESPHome device with the NFC
+    Reader component or the Companion App.
+    💡 The automation will then call a scene.
+
+    🚀 A nice Porject for an esphome tag reader is
     [Github - adonno/tagreader](https://github.com/adonno/tagreader)
   domain: automation
   source_url: https://github.com/HardTy/home-assistant-config/blob/main/blueprints/tag_scene.yaml
   input:
     tag_entity:
-      name: Tag
+      name: 🏷️ Tag (NFC/QR-Code) Entity
       description: The tag that triggers the scene
       selector:
         entity:
           domain: tag
     reader_id:
-      name: ESPHome NFC reader device
-      description: This is your NFC reader
+      name: 🖥️ Tag (NFC/QR-Code) Reader device
+      description: Tag (NFC/QR-Code) Reader device. This can be a ESPHome device with the NFC Reader component or the Companion App.
       selector:
         device:
     scene_id:
-      name: Scene
+      name: 🎞️ Scene
       description: The scene to call when the tag is readed
       selector:
         entity:
