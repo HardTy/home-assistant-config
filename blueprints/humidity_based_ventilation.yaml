@@ -46,7 +46,7 @@ blueprint:
           mode: box
 
 variables:
-  outside_humidity: !input ensor_outside_humidity
+  outside_humidity: !input sensor_outside_humidity
   inside_humidity: !input sensor_inside_humidity
   interval_minutes: !input interval_minutes
   target_notify_devices: !input notification_devices
