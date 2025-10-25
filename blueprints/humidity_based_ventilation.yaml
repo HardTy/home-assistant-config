@@ -62,7 +62,7 @@ action:
   - repeat:
       for_each: "{{ target_notify_devices }}"
     sequence:
-      - service: notify.notify
+      - action: notify.notify
         data:
           message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
           title: "Ventilation Recommendation"
