@@ -7,32 +7,33 @@ blueprint:
 
     This blueprint is create with the help of AI (llm mistralai/magistral-small-2509).
   domain: automation
+  source_url: https://github.com/HardTy/home-assistant-config/blob/main/blueprints/humidity_based_ventilation.yaml
 
-input:
-  sensor_outside_humidity:
-    name: Outdoor Absolute Humidity Sensor
-    selector:
-      entity: sensor
-      multiple: false
-  sensor_inside_humidity:
-    name: Indoor Absolute Humidity Sensor
-    selector:
-      entity: sensor
-      multiple: false
-  notification_device:
-    name: Notification Device (e.g., mobile app)
-    selector:
-      device:
-        integration: mobile_app
+  input:
+    sensor_outside_humidity:
+      name: Outdoor Absolute Humidity Sensor
+      selector:
+        entity: sensor
         multiple: false
-  interval_minutes:
-    name: Interval Between Checks (in minutes)
-    default: 60
-    selector:
-      number:
-        min: 1
-        max: 1440
-        mode: box
+    sensor_inside_humidity:
+      name: Indoor Absolute Humidity Sensor
+      selector:
+        entity: sensor
+        multiple: false
+    notification_device:
+      name: Notification Device (e.g., mobile app)
+      selector:
+        device:
+          integration: mobile_app
+          multiple: false
+    interval_minutes:
+      name: Interval Between Checks (in minutes)
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 1440
+          mode: box
 
 variables:
   outside_humidity: "{{ states(input.sensor_outside_humidity) | float }}"
