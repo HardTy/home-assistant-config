@@ -5,6 +5,8 @@ blueprint:
     This blueprint monitors absolute humidity levels indoors and outdoors.
     It sends a notification when it is optimal to ventilate.
 
+    You can get the absolute humidity levels with the custom integration [Thermal Comfort](https://github.com/dolezsa/thermal_comfort).
+
     This blueprint is create with the help of AI (llm mistralai/magistral-small-2509).
   domain: automation
   source_url: https://github.com/HardTy/home-assistant-config/blob/main/blueprints/humidity_based_ventilation.yaml
@@ -13,19 +15,23 @@ blueprint:
     sensor_outside_humidity:
       name: Outdoor Absolute Humidity Sensor
       selector:
-        entity: sensor
+        entity:
+          integration: thermal_comfort
+          domain: sensor
         multiple: false
     sensor_inside_humidity:
       name: Indoor Absolute Humidity Sensor
       selector:
-        entity: sensor
-        multiple: false
+        entity:
+          integration: thermal_comfort
+          domain: sensor
+      multiple: false
     notification_device:
       name: Notification Device (e.g., mobile app)
       selector:
         device:
           integration: mobile_app
-          multiple: false
+      multiple: true
     interval_minutes:
       name: Interval Between Checks (in minutes)
       default: 60
