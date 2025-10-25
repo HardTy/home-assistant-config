@@ -56,14 +56,22 @@ trigger:
     minutes: "/{{ interval_minutes }}"
     id: interval_check
 
-condition: "{{ outside_humidity < inside_humidity }}"
+conditions:
+  - condition: template
+    value_template: >-
+      {{ states('sensor.garten_thermal_comfort_absolute_humidity') | float <
+         states('sensor.schlafzimmer_thermal_comfort_absolute_humidity') | float }}
 
 action:
   - repeat:
       for_each: "{{ target_notify_devices }}"
-    sequence:
-      - action: notify.notify
-        data:
-          message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
-          title: "Ventilation Recommendation"
-        target: "{{ repeat.item }}"
+      sequence:
+        - action: notify.notify
+          data:
+            message: >-
+              Now is a good time to ventilate! Outdoor humidity ({{
+              states('sensor.garten_thermal_comfort_absolute_humidity') }} g/m³)
+              is lower than indoor humidity ({{
+              states('sensor.schlafzimmer_thermal_comfort_absolute_humidity') }} g/m³).
+            title: Ventilation Recommendation
+          target: "{{ repeat.item }}"
