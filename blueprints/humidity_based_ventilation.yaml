@@ -28,8 +28,9 @@ blueprint:
             integration: thermal_comfort
             domain: sensor
           multiple: false
-    notification_device:
-      name: Notification Device (e.g., mobile app)
+    notification_devices:
+      name: Notification Devices
+      description: (e.g., mobile app)
       selector:
         device:
           entity:
@@ -45,20 +46,24 @@ blueprint:
           mode: box
 
 variables:
-  outside_humidity: "{{ states(input.sensor_outside_humidity) | float }}"
-  inside_humidity: "{{ states(input.sensor_inside_humidity) | float }}"
+  outside_humidity: !input ensor_outside_humidity
+  inside_humidity: !input sensor_inside_humidity
+  interval_minutes: !input interval_minutes
+  target_notify_devices: !input notification_devices
 
 trigger:
   - platform: time_pattern
-    minutes: "/{{ input.interval_minutes }}"
+    minutes: "/{{ interval_minutes }}"
     id: interval_check
 
 condition: "{{ outside_humidity < inside_humidity }}"
 
 action:
-  - service: notify.notify
-    data:
-      message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
-      title: "Ventilation Recommendation"
-    target:
-      - "{{ input.notification_device }}"
+  - repeat:
+      for_each: "{{ target_notify_devices }}"
+    sequence:
+      - service: notify.notify
+        data:
+          message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
+          title: "Ventilation Recommendation"
+        target: "{{ repeat.item }}"
