@@ -16,22 +16,25 @@ blueprint:
       name: Outdoor Absolute Humidity Sensor
       selector:
         entity:
-          integration: thermal_comfort
-          domain: sensor
+          filter:
+            integration: thermal_comfort
+            domain: sensor
           multiple: false
     sensor_inside_humidity:
       name: Indoor Absolute Humidity Sensor
       selector:
         entity:
-          integration: thermal_comfort
-          domain: sensor
-        multiple: false
+          filter:
+            integration: thermal_comfort
+            domain: sensor
+          multiple: false
     notification_device:
       name: Notification Device (e.g., mobile app)
       selector:
         device:
-          integration: mobile_app
-        multiple: true
+          entity:
+            integration: mobile_app
+          multiple: true
     interval_minutes:
       name: Interval Between Checks (in minutes)
       default: 60
