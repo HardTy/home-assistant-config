@@ -1,0 +1,54 @@
+---
+blueprint:
+  name: Humidity-Based Ventilation Notification
+  description: |
+    This blueprint monitors absolute humidity levels indoors and outdoors.
+    It sends a notification when it is optimal to ventilate.
+
+    This blueprint is create with the help of AI (llm mistralai/magistral-small-2509).
+  domain: automation
+
+input:
+  sensor_outside_humidity:
+    name: Outdoor Absolute Humidity Sensor
+    selector:
+      entity: sensor
+      multiple: false
+  sensor_inside_humidity:
+    name: Indoor Absolute Humidity Sensor
+    selector:
+      entity: sensor
+      multiple: false
+  notification_device:
+    name: Notification Device (e.g., mobile app)
+    selector:
+      device:
+        integration: mobile_app
+        multiple: false
+  interval_minutes:
+    name: Interval Between Checks (in minutes)
+    default: 60
+    selector:
+      number:
+        min: 1
+        max: 1440
+        mode: box
+
+variables:
+  outside_humidity: "{{ states(input.sensor_outside_humidity) | float }}"
+  inside_humidity: "{{ states(input.sensor_inside_humidity) | float }}"
+
+trigger:
+  - platform: time_pattern
+    minutes: "/{{ input.interval_minutes }}"
+    id: interval_check
+
+condition: "{{ outside_humidity < inside_humidity }}"
+
+action:
+  - service: notify.notify
+    data:
+      message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
+      title: "Ventilation Recommendation"
+    target:
+      - "{{ input.notification_device }}"
