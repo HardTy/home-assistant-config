@@ -70,11 +70,12 @@ blueprint:
     offset:
       name: Offset of absolute humidity before take action
       default: 1.0
-      number:
-        min: 0
-        max: 10
-        step: 0.1
-        mode: box
+      selector:
+        number:
+          min: 0
+          max: 10
+          step: 0.1
+          mode: box
 
 # ------------------------------------------------------------------------------
 # Automation
