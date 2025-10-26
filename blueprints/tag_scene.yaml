@@ -32,6 +32,12 @@ blueprint:
         entity:
           domain: scene
 
+# ------------------------------------------------------------------------------
+# Automation
+
+mode: single
+alias: Tagreader - Scene per Tag
+
 variables:
   reader_id: !input reader_id
   tag_entity: !input tag_entity
