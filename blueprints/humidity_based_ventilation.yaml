@@ -89,7 +89,7 @@ actions:
   - if:
       - condition: numeric_state
         entity_id: !input sensor_outside_humidity
-        above: !input sensor_inside_humidity
+        below: !input sensor_inside_humidity
     then:
       - if:
           - condition: state
