@@ -47,14 +47,14 @@ blueprint:
 
         Example Notification:
           ```yaml
-            Now is a good time to ventilate! 🌬️
-            Outdoor humidity ({{ '%0.2f'| format(states(outside_humidity)|float) }} g/m³)
-            is lower than indoor humidity ({{'%0.2f'| format(states(inside_humidity)|float) }} g/m³).
+          Now is a good time to ventilate! 🌬️
+          Outdoor humidity ({{ '%0.2f'| format(states(outside_humidity)|float) }} g/m³)
+          is lower than indoor humidity ({{'%0.2f'| format(states(inside_humidity)|float) }} g/m³).
           ```
 
         Example Title:
           ```yaml
-            Ventilation Recommendation 🌬️
+          Ventilation Recommendation 🌬️
           ```
 
       selector:
@@ -89,7 +89,7 @@ actions:
   - if:
       - condition: numeric_state
         entity_id: !input sensor_outside_humidity
-        below: !input sensor_inside_humidity
+        above: !input sensor_inside_humidity
     then:
       - if:
           - condition: state
