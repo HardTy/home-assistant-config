@@ -67,6 +67,14 @@ blueprint:
       default: "/59"
       selector:
         text:
+    offset:
+      name: Offset of absolute humidity before take action
+      default: 1.0
+      number:
+        min: 0
+        max: 10
+        step: 0.1
+        mode: box
 
 # ------------------------------------------------------------------------------
 # Automation
@@ -77,6 +85,7 @@ alias: Humidity-Based Ventilation Recommendation
 variables:
   outside_humidity: !input sensor_outside_humidity
   inside_humidity: !input sensor_inside_humidity
+  offset: !input offset
   boolean_notify: !input boolean_notify
 
 trigger:
@@ -90,6 +99,7 @@ actions:
       - condition: numeric_state
         entity_id: !input sensor_outside_humidity
         below: !input sensor_inside_humidity
+        value_template: "{{ float(state.state) + float(offset) }}"
     then:
       - if:
           - condition: state
