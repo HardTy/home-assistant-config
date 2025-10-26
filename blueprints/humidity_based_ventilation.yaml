@@ -48,7 +48,7 @@ blueprint:
         Example Notification:
           ```yaml
             Now is a good time to ventilate! 🌬️
-            Outdoor humidity ({{ '%0.2f'| format(states(outside_humidity)|float) }} }} g/m³)
+            Outdoor humidity ({{ '%0.2f'| format(states(outside_humidity)|float) }} g/m³)
             is lower than indoor humidity ({{'%0.2f'| format(states(inside_humidity)|float) }} g/m³).
           ```
 
