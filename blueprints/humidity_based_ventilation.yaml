@@ -40,8 +40,8 @@ blueprint:
         entity:
           multiple: false
           domain: input_boolean
-    notification_actions:
-      name: Notification actions
+    notification_lower_outside_actions:
+      name: Notification actions for ventilation
       description: |
         Actions (e.g. pushing a notification, TTS announcement, ...)
 
@@ -62,9 +62,11 @@ blueprint:
     interval_minutes:
       name: Interval Between Checks (in minutes)
       description: |
-        The '/' is required, else the trigger wouldn't work and there is no
-        better way around. Min: /1 Max: /59
-      default: "/59"
+        The '/' is required if you want every X minutes, else the trigger would work once an hour at this time.
+        Recommended: /15 Max: /59
+
+        See also the documentation [Time pattern trigger](https://www.home-assistant.io/docs/automation/trigger/#time-pattern-trigger).
+      default: "/15"
       selector:
         text:
     offset:
@@ -112,7 +114,7 @@ actions:
               entity_id: !input boolean_notify
             data: {}
           - choose: []
-            default: !input notification_actions
+            default: !input notification_lower_outside_actions
     else:
       - action: input_boolean.turn_off
         target:
