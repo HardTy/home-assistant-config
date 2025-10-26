@@ -3,11 +3,11 @@ blueprint:
   name: Humidity-Based Ventilation Notification
   description: |
     This blueprint monitors absolute humidity levels indoors and outdoors.
-    It sends a notification when it is optimal to ventilate.
+    It sends a notification when it is optimal to ventilate. 🌬️
 
     You can get the absolute humidity levels with the custom integration [Thermal Comfort](https://github.com/dolezsa/thermal_comfort).
 
-    This blueprint is create with the help of AI (llm mistralai/magistral-small-2509).
+    This blueprint is create with the help of AI (llm mistralai/magistral-small-2509, ChatGPT) and Websearch.
   domain: automation
   source_url: https://github.com/HardTy/home-assistant-config/blob/main/blueprints/humidity_based_ventilation.yaml
 
@@ -28,37 +28,82 @@ blueprint:
             integration: thermal_comfort
             domain: sensor
           multiple: false
-    notification_device:
-      name: Notification Device (e.g., mobile app)
+    boolean_notify:
+      name: Last notification state
+      description: |
+        An input_boolean to keep the state if we already notified for ventilation on the last run.
+
+        You can create an [Input boolean](https://www.home-assistant.io/integrations/input_boolean)
+        under [Settings > Devices & Services > Helpers](https://my.home-assistant.io/redirect/config_flow_start/?domain=input_boolean).
+      default: []
       selector:
-        device:
-          entity:
-            integration: mobile_app
-          multiple: true
+        entity:
+          multiple: false
+          domain: input_boolean
+    notification_actions:
+      name: Notification actions
+      description: |
+        Actions (e.g. pushing a notification, TTS announcement, ...)
+
+        Example Notification:
+          ```yaml
+            Now is a good time to ventilate! 🌬️
+            Outdoor humidity ({{ '%0.2f'| format(states(outside_humidity)|float) }} }} g/m³)
+            is lower than indoor humidity ({{'%0.2f'| format(states(inside_humidity)|float) }} g/m³).
+          ```
+
+        Example Title:
+          ```yaml
+            Ventilation Recommendation 🌬️
+          ```
+
+      selector:
+        action: {}
     interval_minutes:
       name: Interval Between Checks (in minutes)
-      default: 60
+      description: |
+        The '/' is required, else the trigger wouldn't work and there is no
+        better way around. Min: /1 Max: /59
+      default: "/59"
       selector:
-        number:
-          min: 1
-          max: 1440
-          mode: box
+        text:
+
+# ------------------------------------------------------------------------------
+# Automation
+
+mode: single
+alias: Humidity-Based Ventilation Recommendation
 
 variables:
-  outside_humidity: "{{ states(input.sensor_outside_humidity) | float }}"
-  inside_humidity: "{{ states(input.sensor_inside_humidity) | float }}"
+  outside_humidity: !input sensor_outside_humidity
+  inside_humidity: !input sensor_inside_humidity
+  boolean_notify: !input boolean_notify
 
 trigger:
   - platform: time_pattern
-    minutes: "/{{ input.interval_minutes }}"
+    minutes: !input interval_minutes
     id: interval_check
 
-condition: "{{ outside_humidity < inside_humidity }}"
 
-action:
-  - service: notify.notify
-    data:
-      message: "Now is a good time to ventilate! Outdoor humidity ({{ outside_humidity }}) is lower than indoor humidity ({{ inside_humidity }})."
-      title: "Ventilation Recommendation"
-    target:
-      - "{{ input.notification_device }}"
+actions:
+  - if:
+      - condition: numeric_state
+        entity_id: !input sensor_outside_humidity
+        below: !input sensor_inside_humidity
+    then:
+      - if:
+          - condition: state
+            entity_id: !input boolean_notify
+            state: "off"
+        then:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: !input boolean_notify
+            data: {}
+          - choose: []
+            default: !input notification_actions
+    else:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: !input boolean_notify
+        data: {}
